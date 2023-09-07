@@ -32,6 +32,7 @@ public class QuestionContoller {
 	public String detail(Model model, @PathVariable("id") Integer id) {
 		Question question = this.questionService.getQuestion(id);
 		System.out.println(question);
+		System.out.println("git commit test");
 		model.addAttribute("question", question);
 		return "question_detail";
 		/*
