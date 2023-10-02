@@ -2,11 +2,19 @@ package com.example.demo.question;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.demo.answer.AnswerForm;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,24 +28,37 @@ public class QuestionContoller {
 	
 //	@GetMapping("/question/list")
 	@GetMapping("/list")
-	public String list(Model model) {	//Model 객체는 자바 클래스와 템플릿간의 연결 고리 역할을 한다. 컨트롤러 메서드의 매개변수로 지정해두기만 하면 스프링부트에서 자동으로 Model 객체를 생성해준다.
-		System.out.println("questionList");
-		List<Question> questionList = this.questionService.getList();
-		model.addAttribute("questionList", questionList);
+	public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {	//Model 객체는 자바 클래스와 템플릿간의 연결 고리 역할을 한다. 컨트롤러 메서드의 매개변수로 지정해두기만 하면 스프링부트에서 자동으로 Model 객체를 생성해준다.
+		//List<Question> questionList = this.questionService.getList();
+		Page<Question> paging = this.questionService.getList(page);
+		model.addAttribute("paging", paging);
 		return "question_list";
 	}
 	
 //	@GetMapping(value = "question/detail/{id}")
 	@GetMapping(value = "detail/{id}")
-	public String detail(Model model, @PathVariable("id") Integer id) {
+	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
 		Question question = this.questionService.getQuestion(id);
-		System.out.println(question);
-		System.out.println("git commit test");
 		model.addAttribute("question", question);
 		return "question_detail";
 		/*
 		 * path variable을 사용하는 경우 변수로 사용하고자 하는 url path를 {}로 감싸주고 메서드에서 매개변수로 받을 때 앞에 PathVariable 어노테이션을 붙여줘야한다 두 이름이 동일해야한다
 		 */
 	}
+	
+	@GetMapping("/create")
+	public String questionCreate(QuestionForm questionForm) {
+		return "question_form";
+	}
+	
+	@PostMapping("/create")
+	public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+		if(bindingResult.hasErrors()) {
+			return "question_form";
+		}
+		this.questionService.create(questionForm.getSubject(), questionForm.getContent());
+		return "redirect:/question/list";
+	}
+	
 
 }
