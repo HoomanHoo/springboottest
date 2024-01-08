@@ -37,7 +37,7 @@ public class Main {
     }
 
 
-    
+
     while(true) {
       System.out.println("장바구니에 담을 물건을 선택해주세요");
       System.out.println("0: 장바구니 목록 확인");
@@ -70,7 +70,7 @@ public class Main {
       else if (itemCode == -1) {
         Mart mart = new Mart();
         int paymentValue = mart.calc(customer.getCart());
-        
+
         System.out.println("총 결제 금액은 " + paymentValue + "원 입니다\n결제 하시겠습니까?");
         while(true){
           System.out.println("1: 결제");
